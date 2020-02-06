@@ -52,7 +52,6 @@
       # - mvis/ivis-core/server
       # - mvis/ivis-core/shared
       # - mvis/ivis-core/embedding
-    when: code.changed
 
   - name: install npm packages with dev dependencies
     npm:
@@ -60,10 +59,8 @@
       production: no # we include dev dependencies for this as we need to run the build
     loop:
       - client
-    when: code.changed
 
   - name: build client
     command: npm run build
     args:
       chdir: "{{ mailtrain_directory }}/client"
-    when: code.changed
