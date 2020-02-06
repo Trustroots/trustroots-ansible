@@ -1,0 +1,16 @@
+- name: mailtrain service
+  template:
+    src: mailtrain.service
+    dest: /etc/systemd/system/mailtrain.service
+  notify:
+    - reload mailtrain
+
+- name: enable services
+  systemd:
+    name: "{{ item }}.service"
+    state: started
+    enabled: yes
+  loop:
+    - mailtrain
+    - redis-server
+    - mysql

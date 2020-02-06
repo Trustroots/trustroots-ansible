@@ -1,0 +1,35 @@
+user: "{{ mailtrain_user }}"
+group: "{{ mailtrain_group }}"
+roUser: nobody
+roGroup: nobody
+
+www:
+  host: 127.0.0.1
+  publicPort: {{ mailtrain_endpoint_public_port }}
+  trustedPort: {{ mailtrain_endpoint_trusted_port }}
+  sandboxPort: {{ mailtrain_endpoint_sandbox_port }}
+  proxy: false
+  secret: "{{ mailtrain_secret }}"
+  publicUrlBase: "https://{{ mailtrain_endpoint_public }}"
+  trustedUrlBase: "https://{{ mailtrain_endpoint_trusted }}"
+  sandboxUrlBase: "https://{{ mailtrain_endpoint_sandbox }}"
+
+mysql:
+  database: "{{ mailtrain_database_name }}"
+  user: "{{ mailtrain_database_user }}"
+  password: "{{ mailtrain_database_password }}"
+
+redis:
+  enabled: true
+
+log:
+  level: info
+
+builtinZoneMTA:
+  enabled: false
+
+queue:
+  processes: 5
+
+ldap:
+  enabled: false

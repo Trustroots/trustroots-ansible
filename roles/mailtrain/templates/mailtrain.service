@@ -1,0 +1,16 @@
+[Unit]
+Description=Mailtrain server
+After=syslog.target network.target mariadb.service redis-server.service
+
+[Service]
+Environment="NODE_ENV=production"
+WorkingDirectory={{ mailtrain_directory }}/server
+Type=simple
+ExecStart=/usr/local/bin/node index.js
+User={{ mailtrain_user }}
+Group={{ mailtrain_group }}
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

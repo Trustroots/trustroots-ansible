@@ -1,0 +1,69 @@
+- name: mailtrain code
+  git:
+    repo: https://github.com/Mailtrain-org/mailtrain.git
+    dest: "{{ mailtrain_directory }}"
+    update: true
+    force: yes
+    version: development # version 2 beta, could also pin it to a commit...
+  register: code
+  notify:
+    - reload mailtrain
+
+- name: set permissions
+  file:
+    dest: "{{ mailtrain_directory }}"
+    state: directory
+    owner: "{{ mailtrain_user }}"
+    group: "{{ mailtrain_group }}"
+    recurse: yes
+
+- name: mailtrain config
+  template:
+    src: mailtrain.yml
+    dest: "{{ mailtrain_directory }}/server/config/production.yaml"
+    owner: "{{ mailtrain_user }}"
+    group: "{{ mailtrain_group }}"
+  notify:
+    - reload mailtrain
+
+- become: yes
+  become_user: "{{ mailtrain_user }}"
+  when: code.changed
+  block:
+  - name: install npm packages
+    npm:
+      path: "{{ mailtrain_directory }}/{{ item }}"
+      production: yes
+    loop:
+      # list is from mailtrip repo: setup/functions doForAllModules()
+      # probably don't need them all
+      #- client # installed below with dev dependencies too
+      - shared
+      - server
+
+      # we don't need this as we'll use SMTP to sparkpost
+      # - zone-mta
+
+      # I don't know what all this mvis stuff is, will leave it out for now
+      # - mvis/client
+      # - mvis/server
+      # - mvis/test-embed
+      # - mvis/ivis-core/client
+      # - mvis/ivis-core/server
+      # - mvis/ivis-core/shared
+      # - mvis/ivis-core/embedding
+    when: code.changed
+
+  - name: install npm packages with dev dependencies
+    npm:
+      path: "{{ mailtrain_directory }}/{{ item }}"
+      production: no # we include dev dependencies for this as we need to run the build
+    loop:
+      - client
+    when: code.changed
+
+  - name: build client
+    command: npm run build
+    args:
+      chdir: "{{ mailtrain_directory }}/client"
+    when: code.changed

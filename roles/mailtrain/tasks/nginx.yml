@@ -1,0 +1,41 @@
+- name: nginx config
+  template:
+    src: mailtrain.conf
+    dest: "/srv/configs/mailtrain-{{ item }}.conf"
+
+    # owner/group for consistency with existing entries
+    owner: www-data
+    group: www-data
+  vars:
+    nginx_hostname: "{{ lookup('vars', 'mailtrain_endpoint_' + item) }}"
+    nginx_proxy_to_port: "{{ lookup('vars', 'mailtrain_endpoint_' + item + '_port') }}"
+  loop:
+    - public
+    - trusted
+    - sandbox
+  notify:
+    - reload nginx
+
+- name: nginx sites-available symlink
+  file:
+    src: "/srv/configs/mailtrain-{{ item }}.conf"
+    dest: "/etc/nginx/sites-available/mailtrain-{{ item }}.conf"
+    state: link
+  loop:
+    - public
+    - trusted
+    - sandbox
+  notify:
+    - reload nginx
+
+- name: nginx sites-enabled symlink
+  file:
+    src: "/etc/nginx/sites-available/mailtrain-{{ item }}.conf"
+    dest: "/etc/nginx/sites-enabled/mailtrain-{{ item }}.conf"
+    state: link
+  loop:
+    - public
+    - trusted
+    - sandbox
+  notify:
+    - reload nginx

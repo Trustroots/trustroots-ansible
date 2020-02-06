@@ -1,0 +1,15 @@
+- name: configure letsencrypt domains
+  command: >
+    certbot certonly
+      --webroot
+      --webroot-path /srv/letsencrypt
+      --noninteractive
+      --agree-tos
+      --email "{{ mailtrain_letsencrypt_email }}"
+      --max-log-backups 0
+      -d {{ mailtrain_endpoint_public }},{{ mailtrain_endpoint_trusted }},{{ mailtrain_endpoint_sandbox }}
+  register: certbot_result
+  changed_when:
+  - "'no action taken' not in certbot_result.stdout"
+  notify:
+    - reload nginx

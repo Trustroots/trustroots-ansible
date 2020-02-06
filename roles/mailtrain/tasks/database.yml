@@ -1,0 +1,21 @@
+- name: create database
+  mysql_db:
+    name: "{{ mailtrain_database_name }}"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: create database user
+  mysql_user:
+    name: "{{ mailtrain_database_user }}"
+    password: "{{ mailtrain_database_password }}"
+    priv: "{{ mailtrain_database_name }}.*:ALL"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: create readonly database user
+  mysql_user:
+    name: "{{ mailtrain_database_readonly_user }}"
+    password: "{{ mailtrain_database_readonly_password }}"
+    priv: "{{ mailtrain_database_name }}.*:SELECT"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock

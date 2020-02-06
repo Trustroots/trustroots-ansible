@@ -1,0 +1,38 @@
+---
+- name: trustroots | mailtrain
+  hosts: all
+  become: yes
+  vars_files:
+    - mailtrain.secrets.yml
+  vars:
+    # directory to install mailtrain into
+    mailtrain_directory: /srv/mailtrain
+
+    # user/group that mailtrain will run as
+    mailtrain_user: mailtrain
+    mailtrain_group: mailtrain
+
+    # email address to use for letsencrypt setup
+    mailtrain_letsencrypt_email: support@trustroots.org
+
+    # mailtrain endpoints
+    mailtrain_endpoint_public: mail.trustroots.org               # should have A record to this server
+    mailtrain_endpoint_trusted: mailtrain.trustroots.org          # should have CNAME to mailtrain_endpoint_public
+    mailtrain_endpoint_sandbox: sandbox.mailtrain.trustroots.org  # should have CNAME to mailtrain_endpoint_public
+
+    mailtrain_endpoint_public_port: 9000
+    mailtrain_endpoint_trusted_port: 9001
+    mailtrain_endpoint_sandbox_port: 9002
+
+    # mysql database
+    mailtrain_database_name: mailtrain
+    mailtrain_database_user: mailtrain
+    mailtrain_database_readonly_user: mailtrain_ro
+
+    # set the following options in a secrets file
+    #
+    # mailtrain_secret: ""
+    # mailtrain_database_password: ""
+    # mailtrain_database_readonly_password: ""
+  roles:
+    - role: mailtrain
