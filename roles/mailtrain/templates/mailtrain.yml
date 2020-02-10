@@ -39,7 +39,7 @@ queue:
   retention:
     # Regular and RSS campaign. Once this expires, the campaign is considered finished. The remaining recipients
     # are included in the set of those recipients to whom the message would be delivered if the campaign is again started.
-    campaign: 86400    # 1 day
+    campaign: 864000   # 10 days
     # Triggered campaign. Once this expires, the message gets discarded.
     triggered: 86400   # 1 day
     # Test send (in campaign or template)
