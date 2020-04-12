@@ -29,6 +29,16 @@ Use the `--step` option to run through one step at a time, with interactive conf
 
 ## playbooks
 
+### server
+
+This sets up any basic stuff on the server. It's not much for now.
+
+You can run it with:
+
+```
+ansible-playbook -K server.yml
+```
+
 ### mailtrain
 
 This sets up an instance of [mailtrain](https://github.com/Mailtrain-org/mailtrain).

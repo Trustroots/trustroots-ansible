@@ -1,4 +1,4 @@
-- name: trustroots | mailtrain
+- name: trustroots | server
   hosts: all
   become: yes
   roles:
