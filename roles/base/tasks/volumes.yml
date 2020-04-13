@@ -7,17 +7,44 @@
 - name: install dependencies
   apt:
     name:
+      - cryptsetup
+      - lvm2
       - xfsprogs
 
-- name: create trustroots-data filesystem
+- name: setup luks device
+  luks_device:
+    device: "{{ base__volumes__trustroots_data__device }}"
+    name: trustroots-data
+    state: opened
+    keyfile: /root/trustroots-data-keyfile
+
+- name: setup crypttab
+  crypttab:
+    backing_device: "{{ base__volumes__trustroots_data__device }}"
+    name: trustroots-data
+    state: present
+    password: /root/trustroots-data-keyfile
+
+- name: create volume group
+  lvg:
+    vg: trustroots-data
+    pvs: /dev/mapper/trustroots-data
+
+- name: create mongodb logical volume
+  lvol:
+    vg: trustroots-data
+    lv: mongodb
+    size: 60g
+
+- name: create mongodb filesystem
   filesystem:
-    dev: '{{ base__volumes__trustroots_data__device }}'
+    dev: /dev/trustroots-data/mongodb
     fstype: xfs
 
-- name: mount trustroots-data
+- name: mount mongodb filesystem
   mount:
-    path: /volumes/trustroots
-    src: '{{ base__volumes__trustroots_data__device }}'
+    src: /dev/trustroots-data/mongodb
+    path: /volumes/trustroots-data/mongodb
     fstype: xfs
     # options recommended by DigitalOcean in "Configure your volume"
     opts: discard,defaults,noatime
