@@ -1,5 +1,10 @@
 - name: trustroots | server
   hosts: all
   become: yes
+  vars:
+
+    # https://cloud.digitalocean.com/droplets/3692140/volumes?i=5686e5
+    base__volumes__trustroots_data__device: /dev/disk/by-id/scsi-0DO_Volume_trustroots-data
+
   roles:
     - role: base

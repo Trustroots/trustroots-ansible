@@ -1,0 +1,24 @@
+---
+# configures attached data volumes
+#
+# required vars:
+#   - base__volumes__trustroots_data__device
+
+- name: install dependencies
+  apt:
+    name:
+      - xfsprogs
+
+- name: create trustroots-data filesystem
+  filesystem:
+    dev: '{{ base__volumes__trustroots_data__device }}'
+    fstype: xfs
+
+- name: mount trustroots-data
+  mount:
+    path: /volumes/trustroots
+    src: '{{ base__volumes__trustroots_data__device }}'
+    fstype: xfs
+    # options recommended by DigitalOcean in "Configure your volume"
+    opts: discard,defaults,noatime
+    state: present
