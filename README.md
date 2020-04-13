@@ -19,6 +19,27 @@ pass trustroots/vault
 
 (I would actually like to use the [passwordstore](https://docs.ansible.com/ansible/latest/plugins/lookup/passwordstore.html) module, but not everyone is using [pass](https://www.passwordstore.org/) yet...)
 
+### sudo password
+
+When running commands, it'll need your user password for sudo access. There are two approaches:
+
+- use `-K` option when running `ansible-playbook` and it'll ask you each time you run for the password
+- create a local configuration file with a method to retrieve the password, see example below
+
+For my setup I create `local.yml` with the following contents:
+
+```yml
+ansible_become_pass: "{{ lookup('passwordstore', 'trustroots/server/nick') }}"
+```
+
+This let's me then run:
+
+```
+ansible-playbook server.yml -e @local.yml
+```
+
+It also supports other password stores, e.g. lastpass, OSX keyring, 1password, ... see [eengstrom.github.io/musings/ansible-sudo-var](https://eengstrom.github.io/musings/ansible-sudo-var) for more details.
+
 ## standards
 
 It tries to follow the ansible [best practises](https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html) guide for directory layout and other conventions.
@@ -36,8 +57,10 @@ This sets up any basic stuff on the server. It's not much for now.
 You can run it with:
 
 ```
-ansible-playbook -K server.yml
+ansible-playbook server.yml
 ```
+
+(...and your choice of _sudo password_ method, see above)
 
 ### mailtrain
 
@@ -50,7 +73,7 @@ See [mailtrain.yml](mailtrain.yml) for the configuration options and values.
 You can run it with:
 
 ```
-ansible-playbook -K mailtrain.yml
+ansible-playbook mailtrain.yml
 ```
 
-(the `-K` flag is to make it ask you for your user password to gain super user access)
+(...and your choice of _sudo password_ method, see above)
